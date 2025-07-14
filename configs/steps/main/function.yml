@@ -1,0 +1,22 @@
+name: ${self:service}-${sls:stage}-scheduler-main
+loggingConfig:
+  level: ${param:SETTING_LOG_LEVEL}
+  includeExecutionData: true
+  destinations:
+    - Fn::GetAtt: [stepSchedulerMain, Arn]
+definition:
+  Comment: stepSchedulerMain
+  StartAt: InvokeProcessMain
+  States:
+    InvokeProcessMain:
+      Type: Task
+      Resource: arn:aws:states:::lambda:invoke
+      Parameters:
+        FunctionName: ${self:service}-${sls:stage}-scheduler-main
+        Payload.$: "$"
+      End: true
+events:
+  - schedule:
+      description: stepSchedulerMain
+      rate: ${param:CRON_BATCH_MAIN}
+      enabled: true

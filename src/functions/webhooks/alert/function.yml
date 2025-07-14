@@ -1,0 +1,7 @@
+handler: src/functions/webhooks/alert/handler.main
+events:
+  - cloudwatchLog:
+      logGroup: /aws/lambda/${self:service}-${sls:stage}-scheduler-main
+      filter: 'ERROR -punycode -DeprecationWarning'
+dependsOn:
+  - SchedulerDashmainLambdaFunction

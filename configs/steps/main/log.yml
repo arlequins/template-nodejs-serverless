@@ -1,0 +1,4 @@
+Type: AWS::Logs::LogGroup
+Properties:
+  LogGroupName: /aws/lambda/${self:service}-${sls:stage}/scheduler-main
+  RetentionInDays: ${param:SETTING_LOG_RETENTION_IN_DAYS}
