@@ -1,0 +1,4 @@
+handler: src/functions/schedulers/v1/main/handler.main
+memorySize: 4096
+timeout: 900
+ephemeralStorageSize: 4096

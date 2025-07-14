@@ -1,0 +1,2 @@
+task: ${self:service}-${sls:stage}
+service: ${self:service}

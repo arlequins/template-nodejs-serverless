@@ -1,0 +1,36 @@
+name: template-check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: check
+  cancel-in-progress: false
+
+env:
+  ENVIRONMENT: develop
+  AWS_REGION: ap-northeast-1
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: make service agent key
+        run: echo "test" > gcp_key_base.txt
+        shell: bash
+
+      - name: npm ci
+        run: npm ci
+        shell: bash
+
+      - name: lint
+        run: npm run lint
+
+      - name: test:coverage
+        env:
+          CI: true
+        run: npm run test

@@ -1,0 +1,26 @@
+{
+  "extends": "./node_modules/@arlequins/common-config/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "baseUrl": "./",
+    "paths": {
+      "@functions/*": ["src/functions/*"],
+      "@libs/*": ["src/libs/*"],
+      "@typing/*": ["src/types/*"],
+      "@typing": ["src/types"],
+      "@constants/*": ["src/constants/*"],
+      "@constants": ["src/constants"],
+      "@tests/*": ["src/tests/*"]
+    },
+    "outDir": "lib"
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    ".serverless/**/*",
+    ".vscode/**/*",
+    "docs/**"
+  ]
+}

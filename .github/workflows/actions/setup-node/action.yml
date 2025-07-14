@@ -1,0 +1,69 @@
+name: Setup Node
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws_access_key_id }}
+        aws-secret-access-key: ${{ inputs.aws_secret_access_key }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Get secrets by name - infra
+      uses: aws-actions/aws-secretsmanager-get-secrets@v1
+      with:
+        secret-ids: |
+          SECRET_INFRA,${{ inputs.ssm_key_name }}
+        parse-json-secrets: true
+
+    - name: make envfile
+      uses: SpicyPizza/create-envfile@v1.3
+      with:
+        envkey_NODE_ENV: ${{ inputs.environment }}
+        envkey_GCP_SA_KEY: ${{ inputs.gcp_sa_key }}
+        envkey_SLACK_BOT_OAUTH_TOKEN: ${{ inputs.slack_bot_auth_token }}
+        envkey_SLACK_BOT_POST_CHANNEL: ${{ inputs.slack_bot_post_channel }}
+        envkey_AWS_IDENTIFIER: ${{ env.SECRET_INFRA_AWS_IDENTIFIER }}
+        envkey_AWS_SUBNET_ID1: ${{ env.SECRET_INFRA_AWS_SUBNET_ID1 }}
+        envkey_AWS_SUBNET_ID2: ${{ env.SECRET_INFRA_AWS_SUBNET_ID2 }}
+        envkey_AWS_LAMBDA_SECURITY_GROUP_ID: ${{ env.SECRET_INFRA_LAMBDA_SECURITY_GROUP_ID }}
+        envkey_AWS_S3_STORAGE_ID: ${{ env.SECRET_INFRA_S3_STORAGE_ID }}
+
+    - name: make service agent key
+      run: echo "${{ inputs.gcp_sa_key }}" > gcp_key_base.txt
+      shell: bash
+
+    - name: npm ci
+      run: npm ci
+      shell: bash
+
+inputs:
+  environment:
+    description: 'The environment'
+    required: true
+    default: 'develop'
+  ssm_key_name:
+    required: true
+  gcp_sa_key:
+    description: 'gcp service account key'
+    required: true
+  slack_bot_auth_token:
+    description: 'slack bot oauth token'
+    required: true
+  slack_bot_post_channel:
+    description: 'slack bot post channel'
+    required: true
+  aws_region:
+    description: 'The AWS region to use'
+    required: true
+    default: 'ap-northeast-1'
+  aws_access_key_id:
+    description: 'aws access key id'
+    required: true
+  aws_secret_access_key:
+    description: 'aws secret access key'
+    required: true

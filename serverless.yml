@@ -1,0 +1,84 @@
+service: template-nodejs
+
+params: ${file(configs/params.yml)}
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  timeout: 28
+  memorySize: 1024
+  versionFunctions: false
+  region: ap-northeast-1
+  stage: ${opt:stage, "offline"}
+  logRetentionInDays: ${param:SETTING_LOG_RETENTION_IN_DAYS}
+  tags: ${file(configs/tags.yml)}
+  environment: ${file(configs/environments.yml)}
+  iam:
+    role:
+      statements: ${file(configs/iam-role-statements.yml)}
+  vpc:
+    securityGroupIds:
+      - ${param:AWS_LAMBDA_SECURITY_GROUP_ID}
+    subnetIds:
+      - ${param:AWS_SUBNET_ID1}
+      - ${param:AWS_SUBNET_ID2}
+  deploymentBucket:
+    name: ${self:service}-${sls:stage}-serverless-${param:AWS_IDENTIFIER}
+    serverSideEncryption: AES256
+    blockPublicAccess: true
+  layers:
+    - Ref: GoogleApisLambdaLayer
+    - Ref: AwsSdkLambdaLayer
+
+plugins:
+  - serverless-offline
+  - serverless-deployment-bucket
+  - serverless-step-functions
+
+package:
+  individually: true
+  patterns:
+    - 'gcp_key_base.txt'
+    - '!node_modules/googleapis/**'
+    - '!node_modules/@aws-sdk/**'
+    - '!layers/**'
+    - '!configs/**'
+
+layers:
+  googleApis:
+    path: layers/googleApis
+    description: "sdk gcp"
+    compatibleRuntimes:
+      - nodejs20.x
+      - nodejs22.x
+    compatibleArchitectures:
+      - x86_64
+      - arm64
+  awsSdk:
+    path: layers/awsSdk
+    description: "sdk aws"
+    compatibleRuntimes:
+      - nodejs20.x
+      - nodejs22.x
+    compatibleArchitectures:
+      - x86_64
+      - arm64
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+    websocketPort: 3001
+    lambdaPort: 3002
+    albPort: 3003
+
+functions:
+  scheduler-main: ${file(src/functions/schedulers/v1/main/function.yml)}
+  webhook-alert: ${file(src/functions/webhooks/alert/function.yml)}
+
+resources:
+  Resources:
+    schedulerMain: ${file(configs/steps/main/log.yml)}
+
+stepFunctions:
+  stateMachines:
+    scheduler-main: ${file(configs/steps/main/function.yml)}

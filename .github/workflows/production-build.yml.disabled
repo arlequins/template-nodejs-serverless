@@ -1,0 +1,37 @@
+name: deploy - production
+
+on:
+  release:
+    types: [created]
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+
+env:
+  ENVIRONMENT: production
+  AWS_REGION: ap-northeast-1
+  SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: ./.github/workflows/actions/setup-node
+        with:
+          environment: ${{ env.ENVIRONMENT }}
+          ssm_key_name: infra-${{ env.ENVIRONMENT }}-values/template
+          gcp_sa_key: ${{ secrets.PRODUCTION_GCP_SA_KEY }}
+          slack_bot_auth_token: ${{ secrets.PRODUCTION_SLACK_BOT_OAUTH_TOKEN }}
+          slack_bot_post_channel: ${{ secrets.PRODUCTION_SLACK_BOT_POST_CHANNEL }}
+          aws_region: ${{ env.AWS_REGION }}
+          aws_access_key_id: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
+
+      - name: deploy
+        run: npm run deploy:${{ env.ENVIRONMENT }}
