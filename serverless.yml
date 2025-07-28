@@ -38,7 +38,7 @@ plugins:
 package:
   individually: true
   patterns:
-    - 'gcp_key_base.txt'
+    - 'config.json'
     - '!node_modules/googleapis/**'
     - '!node_modules/@aws-sdk/**'
     - '!layers/**'
@@ -72,6 +72,7 @@ custom:
     albPort: 3003
 
 functions:
+  api-v1: ${file(src/functions/api/v1/function.yml)}
   scheduler-main: ${file(src/functions/schedulers/v1/main/function.yml)}
   webhook-alert: ${file(src/functions/webhooks/alert/function.yml)}
 

@@ -26,10 +26,6 @@ jobs:
         uses: ./.github/workflows/actions/setup-node
         with:
           environment: ${{ env.ENVIRONMENT }}
-          ssm_key_name: infra-${{ env.ENVIRONMENT }}-values/template
-          gcp_sa_key: ${{ secrets.GCP_SA_KEY }}
-          slack_bot_auth_token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          slack_bot_post_channel: ${{ secrets.SLACK_BOT_POST_CHANNEL }}
           aws_region: ${{ env.AWS_REGION }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
