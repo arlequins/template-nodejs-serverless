@@ -1,4 +1,25 @@
 import { EnvStage } from "@typing";
+import fs from "fs";
+import path from "path";
+
+type TypeConfigurationVariables = {
+  gcp: {
+    key: string;
+    email: string;
+  };
+  slack: {
+    oauthToken: string;
+    channel: string;
+  };
+};
+
+// Read config.json file synchronously
+const configFileContent = fs.readFileSync(
+  path.resolve(process.cwd(), "config.json"),
+  "utf-8",
+);
+const configurationVariables: TypeConfigurationVariables =
+  JSON.parse(configFileContent);
 
 // Determine if the current environment is a test environment
 const isTest = process.env.NODE_ENV === "test";
@@ -19,20 +40,18 @@ const environment = {
   stage: process.env.STAGE as EnvStage,
   // AWS region
   region: process.env.REGION ?? "",
-  // Google Cloud Platform credentials
-  gcp: {
-    key: process.env.GCP_SA_KEY ?? "",
-    email: "email@example.com", // Fixed email, consider moving to env if needed
-  },
+
   // AWS-specific configuration
   aws: {
+    identifier: process.env.AWS_IDENTIFIER ?? "",
     storage: process.env.AWS_S3_STORAGE_ID ?? "",
   },
+
+  // Google Cloud Platform credentials
+  gcp: configurationVariables.gcp,
+
   // Slack integration configuration
-  slack: {
-    oauthToken: process.env.SLACK_BOT_OAUTH_TOKEN ?? "",
-    channel: process.env.SLACK_BOT_POST_CHANNEL ?? "",
-  },
+  slack: configurationVariables.slack,
 };
 
 export default environment;

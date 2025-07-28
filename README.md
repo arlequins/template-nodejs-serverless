@@ -12,11 +12,9 @@ template for nodejs using serverless framework v4
 "node": ">=20.x"
 ```
 
-#### GCP SA KEY
+#### configuration variables
 
-- need to make gcp_key_base.txt
-  - `base64 -i key.json -o gcp_key_base.txt`
-  - or `sh ./script/init.sh`
+- need to make config.json and save in s3 bucket
 
 ## invoke functions
 

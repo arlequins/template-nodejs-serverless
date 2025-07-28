@@ -16,4 +16,4 @@ coverage
 local
 
 archives/
-gcp_key_base.txt
+config.json

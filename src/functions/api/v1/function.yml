@@ -1,0 +1,12 @@
+handler: src/functions/api/v1/handler.main
+memorySize: 1024
+events:
+  - http:
+      path: api/v1/root
+      method: get
+      private: true
+      cors:
+        headers:
+          - Content-Type
+          - Authorization
+          - x-api-key

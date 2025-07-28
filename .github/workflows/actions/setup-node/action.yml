@@ -4,7 +4,7 @@ runs:
   steps:
     - uses: actions/setup-node@v4
       with:
-        node-version: 20.x
+        node-version: 22.x
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -17,24 +17,23 @@ runs:
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
         secret-ids: |
-          SECRET_INFRA,${{ inputs.ssm_key_name }}
+          SECRET_INFRA,infra-${{ inputs.environment }}-common/values
         parse-json-secrets: true
 
     - name: make envfile
       uses: SpicyPizza/create-envfile@v1.3
       with:
         envkey_NODE_ENV: ${{ inputs.environment }}
-        envkey_GCP_SA_KEY: ${{ inputs.gcp_sa_key }}
-        envkey_SLACK_BOT_OAUTH_TOKEN: ${{ inputs.slack_bot_auth_token }}
-        envkey_SLACK_BOT_POST_CHANNEL: ${{ inputs.slack_bot_post_channel }}
         envkey_AWS_IDENTIFIER: ${{ env.SECRET_INFRA_AWS_IDENTIFIER }}
         envkey_AWS_SUBNET_ID1: ${{ env.SECRET_INFRA_AWS_SUBNET_ID1 }}
         envkey_AWS_SUBNET_ID2: ${{ env.SECRET_INFRA_AWS_SUBNET_ID2 }}
         envkey_AWS_LAMBDA_SECURITY_GROUP_ID: ${{ env.SECRET_INFRA_LAMBDA_SECURITY_GROUP_ID }}
-        envkey_AWS_S3_STORAGE_ID: ${{ env.SECRET_INFRA_S3_STORAGE_ID }}
+        envkey_AWS_S3_STORAGE_ID: ${{ env.SECRET_INFRA_S3_STORAGE_ID_CORE }}
+        envkey_AWS_WAF_NAME: ${{ env.SECRET_INFRA_AWS_WAF_NAME }}
+        envkey_AWS_CLOUDFRONT_WAF_NAME: ${{ env.SECRET_INFRA_AWS_CLOUDFRONT_WAF_NAME }}
 
-    - name: make service agent key
-      run: echo "${{ inputs.gcp_sa_key }}" > gcp_key_base.txt
+    - name: make config.json
+      run: aws s3 cp s3://${{ env.SECRET_INFRA_S3_STORAGE_ID_MAIN }}/app/core/config.json ./config.json
       shell: bash
 
     - name: npm ci
@@ -46,17 +45,6 @@ inputs:
     description: 'The environment'
     required: true
     default: 'develop'
-  ssm_key_name:
-    required: true
-  gcp_sa_key:
-    description: 'gcp service account key'
-    required: true
-  slack_bot_auth_token:
-    description: 'slack bot oauth token'
-    required: true
-  slack_bot_post_channel:
-    description: 'slack bot post channel'
-    required: true
   aws_region:
     description: 'The AWS region to use'
     required: true
