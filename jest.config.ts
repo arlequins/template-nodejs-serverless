@@ -6,7 +6,7 @@ import { jestrc } from "@arlequins/common-config";
 
 const moduleNameMapper = {
   "@functions/(.*)": "<rootDir>/src/functions/$1",
-  "@libs/(.*)": "<rootDir>/src/libs/$1",
+  "@lib/(.*)": "<rootDir>/src/lib/$1",
   "@settings/(.*)": "<rootDir>/src/settings/$1",
   "@typing/(.*)": "<rootDir>/src/typing/$1",
   "@constants/(.*)": "<rootDir>/src/constants/$1",

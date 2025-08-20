@@ -1,5 +1,5 @@
-import { sendSlackMessage } from "@libs/api/slack";
-import { loggingDebug } from "@libs/utils/logger";
+import { sendSlackMessage } from "@lib/api/slack";
+import { loggingDebug } from "@lib/utils/logger";
 import zlib from "zlib";
 
 // Handler for processing CloudWatch Logs events and sending messages to Slack
