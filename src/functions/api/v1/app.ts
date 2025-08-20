@@ -2,12 +2,12 @@ import express from "express";
 import cors from "cors";
 import compression from "compression";
 import { EnvStage } from "@typing";
-import routes, { prefix } from "@libs/usecases/api/v1";
+import routes, { prefix } from "@lib/usecases/api/v1";
 import environment, { constants } from "@constants/environment";
 import {
   resultExpressAdditionalHeaders,
   snakeCaseMiddleware,
-} from "@libs/utils/express";
+} from "@lib/utils/express";
 
 const app = express();
 app.disable("x-powered-by");

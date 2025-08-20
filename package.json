@@ -6,9 +6,7 @@
   },
   "scripts": {
     "start": "serverless offline --verbose",
-    "format": "prettier \"src/**/*.{js,ts}\" --write",
     "lint": "eslint \"src/**/*.{js,ts}\"",
-    "lint:fix": "eslint \"src/**/*.{js,ts}\" --fix",
     "test": "TZ=Asia/Tokyo jest --passWithNoTests --collect-coverage --silent=true",
     "test:log": "TZ=Asia/Tokyo jest --passWithNoTests",
     "deploy:develop": "npx sls deploy --stage develop",

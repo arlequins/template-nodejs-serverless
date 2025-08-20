@@ -1,0 +1,10 @@
+{
+  "gcp": {
+    "key": "",
+    "email": ""
+  },
+  "slack": {
+    "oauthToken": "",
+    "channel": ""
+  }
+}
