@@ -1,0 +1,12 @@
+- name: ${self:service}-${sls:stage}-common-${param:AWS_IDENTIFIER}
+  usagePlan:
+    name: '${self:service}-${sls:stage}-usageplan-common-${param:AWS_IDENTIFIER}'
+    quota:
+      limit: 1000
+      period: DAY
+    throttle:
+      burstLimit: 100
+      rateLimit: 10
+- name: ${self:service}-${sls:stage}-app-${param:AWS_IDENTIFIER}
+  usagePlan:
+    name: '${self:service}-${sls:stage}-usageplan-app-${param:AWS_IDENTIFIER}'

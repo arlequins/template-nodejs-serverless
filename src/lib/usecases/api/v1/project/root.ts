@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { errorBadRequest } from "@lib/utils/express/error";
 import RESPONSE_CODES from "@constants/express/response-codes";
 
-const GetRoot = (async (req, res) => {
+const get = (async (req, res) => {
   const query = req.query;
   if (!query) {
     throw errorBadRequest(RESPONSE_CODES.ERROR_101_BAD_PARAMS);
@@ -12,4 +12,6 @@ const GetRoot = (async (req, res) => {
   });
 }) as RequestHandler;
 
-export default GetRoot;
+export default {
+  get,
+};

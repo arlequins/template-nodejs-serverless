@@ -1,8 +1,8 @@
 import { Router } from "express";
-import subRouter from "./project/sub-router";
+import root from "./root";
 
 const router = Router();
 
-router.use("/project", subRouter);
+router.get("/root", root.get);
 
 export default router;

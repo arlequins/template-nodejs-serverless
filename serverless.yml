@@ -3,6 +3,8 @@ service: template-nodejs
 params: ${file(configs/params.yml)}
 
 provider:
+  # apiGateway:
+  #   disableDefaultEndpoint: true
   name: aws
   runtime: nodejs22.x
   timeout: 28
@@ -31,9 +33,13 @@ provider:
     - Ref: AwsSdkLambdaLayer
 
 plugins:
-  - serverless-offline
+  # - serverless-domain-manager
   - serverless-deployment-bucket
+  - serverless-associate-waf
   - serverless-step-functions
+  - serverless-offline
+  - serverless-lift
+  - serverless-add-api-key
 
 package:
   individually: true
@@ -49,7 +55,6 @@ layers:
     path: layers/googleApis
     description: "sdk gcp"
     compatibleRuntimes:
-      - nodejs20.x
       - nodejs22.x
     compatibleArchitectures:
       - x86_64
@@ -58,7 +63,6 @@ layers:
     path: layers/awsSdk
     description: "sdk aws"
     compatibleRuntimes:
-      - nodejs20.x
       - nodejs22.x
     compatibleArchitectures:
       - x86_64
@@ -70,9 +74,23 @@ custom:
     websocketPort: 3001
     lambdaPort: 3002
     albPort: 3003
+  apiKeys: ${file(configs/custom-api-keys.yml)}	
+  associateWaf:
+    name: ${param:AWS_WAF_NAME}
+    version: V2
+  # customDomain:
+  #   domainName: ${param:API_DOMAIN}
+  #   stage: ${sls:stage}
+  #   certificateName: ${param:API_DOMAIN}
+  #   createRoute53Record: true
+  #   endpointType: regional
+  #   apiType: rest
+  #   securityPolicy: tls_1_2
+  #   enabled: true
 
 functions:
   api-v1: ${file(src/functions/api/v1/function.yml)}
+  api-v2: ${file(src/functions/api/v2/function.yml)}
   scheduler-main: ${file(src/functions/schedulers/v1/main/function.yml)}
   webhook-alert: ${file(src/functions/webhooks/alert/function.yml)}
 

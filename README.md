@@ -9,7 +9,7 @@ template for nodejs using serverless framework v4
 ### softwares
 
 ```
-"node": ">=20.x"
+"node": ">=22.x"
 ```
 
 #### configuration variables
