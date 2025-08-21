@@ -32,7 +32,7 @@ const swaggerOptions = {
     ],
   },
   // Specify the paths to files containing API annotations.
-  apis: ["./src/lib/usecases/api/**/**/*.ts`"], // Modify according to your project structure.
+  apis: ["./src/lib/usecases/api/**/**/*.ts"], // Modify according to your project structure.
 };
 
 // Generate Swagger specification (JSON object) based on JSDoc comments.
