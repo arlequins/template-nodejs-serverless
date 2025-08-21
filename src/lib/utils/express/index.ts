@@ -2,52 +2,6 @@ import { isObject } from "lodash";
 import { convertKeysToSnakeCase } from "../transform";
 import { RequestHandler } from "express";
 import { loggingInfo } from "../logger";
-import STATUS_CODES from "@constants/express/status-codes";
-import RESPONSE_CODES from "@constants/express/response-codes";
-
-const checkError = (error, res) => {
-  const errors = error?.errors || [];
-
-  if (error?.name === "ValidationError" && error?.errors?.length) {
-    return res.status(STATUS_CODES.ERROR_BAD_PARAMS).json({
-      msg: RESPONSE_CODES.ERROR_101_BAD_PARAMS,
-      errors,
-    });
-  }
-
-  if (error?.name === "BadRequestError") {
-    return res.status(error.statusCode).json({
-      msg: RESPONSE_CODES.ERROR_101_BAD_PARAMS,
-      errors: [...errors, JSON.parse(error.message)],
-    });
-  }
-
-  if (error?.name === "ForbiddenError") {
-    return res.status(error.statusCode).json({
-      msg: RESPONSE_CODES.ERROR_102_VALIDATION_CHECK,
-      errors: [...errors, JSON.parse(error.message)],
-    });
-  }
-
-  if (error?.name === "InternalServerError") {
-    return res.status(error.statusCode).json({
-      msg: RESPONSE_CODES.ERROR_103_UNEXPECTED,
-      errors: [...errors, JSON.parse(error.message)],
-    });
-  }
-
-  if (error?.name === "NotFoundError") {
-    return res.status(error.statusCode).json({
-      msg: RESPONSE_CODES.ERROR_400_NO_DATA,
-      errors: [...errors, JSON.parse(error.message)],
-    });
-  }
-
-  return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-    msg: RESPONSE_CODES.ERROR_105_UNKNOWN,
-    errors,
-  });
-};
 
 export const resultExpressAdditionalHeaders = (req, res, next) => {
   if (req.secure) {
@@ -84,30 +38,13 @@ export const snakeCaseMiddleware = (_req, res, next) => {
   next();
 };
 
-export const wrapRoute = (handler) =>
-  (async (req, res, next) => {
-    try {
-      loggingInfo(
-        JSON.stringify({
-          path: req.path,
-          params: req.params,
-          query: req.query,
-        }),
-      );
-
-      const originalSend = res.send;
-      res.send = function (body) {
-        loggingInfo(
-          JSON.stringify({
-            response: body,
-            statusCode: res.statusCode,
-          }),
-        );
-        return originalSend.call(this, body);
-      };
-      await handler(req, res, next);
-    } catch (error) {
-      loggingInfo(error);
-      checkError(error, res);
-    }
-  }) as RequestHandler;
+export const loggingMiddleware: RequestHandler = (req, _res, next) => {
+  loggingInfo(
+    JSON.stringify({
+      path: req.path,
+      params: req.params,
+      query: req.query,
+    }),
+  );
+  next();
+};

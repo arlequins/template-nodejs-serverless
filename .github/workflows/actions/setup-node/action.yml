@@ -28,16 +28,27 @@ runs:
         envkey_AWS_SUBNET_ID1: ${{ env.SECRET_INFRA_AWS_SUBNET_ID1 }}
         envkey_AWS_SUBNET_ID2: ${{ env.SECRET_INFRA_AWS_SUBNET_ID2 }}
         envkey_AWS_LAMBDA_SECURITY_GROUP_ID: ${{ env.SECRET_INFRA_LAMBDA_SECURITY_GROUP_ID }}
-        envkey_AWS_S3_STORAGE_ID: ${{ env.SECRET_INFRA_S3_STORAGE_ID_CORE }}
+        envkey_AWS_S3_STORAGE_ID: ${{ env.SECRET_INFRA_S3_STORAGE_ID_TEMPLATE }}
         envkey_AWS_WAF_NAME: ${{ env.SECRET_INFRA_AWS_WAF_NAME }}
         envkey_AWS_CLOUDFRONT_WAF_NAME: ${{ env.SECRET_INFRA_AWS_CLOUDFRONT_WAF_NAME }}
 
     - name: make config.json
-      run: aws s3 cp s3://${{ env.SECRET_INFRA_S3_STORAGE_ID_MAIN }}/app/core/config.json ./config.json
+      run: aws s3 cp s3://${{ env.SECRET_INFRA_S3_STORAGE_ID_MAIN }}/app/template/config.json ./config.json
       shell: bash
 
     - name: npm ci
       run: npm ci
+      shell: bash
+
+    - name: npm run doc
+      run: npm run doc
+      shell: bash
+
+    - name: upload api-docs
+      run: |
+        mkdir -p api-docs
+        aws s3 cp ./out/api-docs/index.html s3://${{ env.SECRET_INFRA_S3_STORAGE_ID_MAIN }}/app/template/api-docs/index.html
+        aws s3 cp ./out/api-docs/swagger.json s3://${{ env.SECRET_INFRA_S3_STORAGE_ID_MAIN }}/app/template/api-docs/swagger.json
       shell: bash
 
 inputs:

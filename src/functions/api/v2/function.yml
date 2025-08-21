@@ -1,8 +1,8 @@
-handler: src/functions/api/v1/handler.main
+handler: src/functions/api/v2/handler.main
 memorySize: 1024
 events:
   - http:
-      path: api/v1/{proxy+}
+      path: api/v2/{proxy+}
       method: any
       private: true
       cors:
