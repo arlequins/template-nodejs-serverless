@@ -21,7 +21,7 @@
     "@codegenie/serverless-express": "^4.17.0",
     "@google-cloud/bigquery": "^8.1.0",
     "@slack/web-api": "^7.9.3",
-    "axios": "^1.11.0",
+    "axios": "^1.12.1",
     "axios-retry": "^4.5.0",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
